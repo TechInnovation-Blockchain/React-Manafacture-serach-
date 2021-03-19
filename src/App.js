@@ -11,16 +11,23 @@ class MainComponent extends Component {
       apiURL: 'http://tcr.etoolpim.com/api/?column=YearID',
       appData: [],
       isLoaded: false,
-      urlLevels: ['Year', 'Make', 'Model', 'EngineBase', 'Transmission'],
-      currentStep: 0,
-      makeID: null,
-      YearID: null,
-      modelID: null,
+      isData: false
     }
   }
 
   componentDidMount() {
     const { match: { params } } = this.props
+    if (params.product !== "null" && params.product !== undefined) {
+      const url = this.state.baseURL + "id=" + params.product + "&pricing=1&attributes=1"
+      this.setState({
+        isData: true,
+      })
+      this.GetDataForCurrentStep(url);
+    }
+    if (params.trans !== "null" && params.trans !== undefined) {
+      const url = this.state.baseURL + "YearID=" + params.year + "&MakeID=" + params.make + "&ModelID=" + params.model + "&EngineBaseID=" + params.engine + "&EngineBaseID=" + params.trans + "&getProducts=1"
+      this.GetDataForCurrentStep(url);
+    }
     if (params.engine !== "null" && params.engine !== undefined) {
       const url = this.state.baseURL + "YearID=" + params.year + "&MakeID=" + params.make + "&ModelID=" + params.model + "&EngineBaseID=" + params.engine + "&column=TransmissionMfrCodeID"
       this.GetDataForCurrentStep(url);
@@ -39,20 +46,17 @@ class MainComponent extends Component {
     }
     else {
       const url = this.state.baseURL + "&column=YearID"
-      this.setState({
-        isLoaded: false,
-      })
       this.GetDataForCurrentStep(url);
     }
 
   }
 
   itemSelected = (id) => {
-    let the_arr = window.location.href;
-    if (the_arr.slice(-1) === "/") {
-      the_arr = the_arr.substr(0, the_arr.length - 1)
+    let path = window.location.href;
+    if (path.slice(-1) === "/") {
+      path = path.substr(0, path.length - 1)
     }
-    window.location.href = the_arr + "/" + id
+    window.location.href = path + "/" + id
   }
 
   GetDataForCurrentStep = (url) => {
@@ -92,7 +96,15 @@ class MainComponent extends Component {
         </header>
         <ul>
           {
-            this.state.appData.data.map((item) => {
+            this.state.isData && this.state.appData.data.map((item) => (<li key={item.id}>
+              <button>
+                {item.Description}#ASDF
+              </button>
+            </li>
+            )
+            )}
+          {
+            !this.state.isData && this.state.appData.data.map((item) => {
               if (item.value) {
                 return <li key={item.id}>
                   <button onClick={() => this.itemSelected(item.id)}>

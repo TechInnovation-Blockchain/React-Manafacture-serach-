@@ -27,6 +27,9 @@ ReactDOM.render(
         <Route path="/:year/:make/:model/:engine/:trans" exact>
           <App />
         </Route>
+        <Route path="/:year/:make/:model/:engine/:trans/:product" exact>
+          <App />
+        </Route>
         <Route path="" exact>
           <App />
         </Route>
